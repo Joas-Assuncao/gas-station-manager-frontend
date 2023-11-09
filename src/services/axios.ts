@@ -11,7 +11,7 @@ export const fetcher = (url: string) => {
     })
     .then((res) => {
       if (!res.data) {
-        throw Error(res.data.message);
+        throw Error("Não foi possível carregar os motoristas.");
       }
 
       return res.data;
