@@ -1,13 +1,21 @@
-import Head from 'next/head';
+import Head from "next/head";
+
+import { ErrorFetching } from "@/components/ErrorFetching";
+import { useDrivers } from "@/hooks/useDrivers";
+import { Table } from "@/components/Table";
 
 export default function Home() {
+  const { drivers, error, isLoading } = useDrivers();
+
   return (
     <>
       <Head>
-        <title>Manager Gas Station</title>
+        <title>Gas Station Manager</title>
       </Head>
-      <main className='flex min-h-screen flex-col items-center justify-between p-24'>
-        <h1>Hello World Next</h1>
+      <main>
+        <h1 className="text-3xl mb-4">Motoristas</h1>
+        <ErrorFetching hasError={error || !drivers[0]} />
+        <Table dataSource={drivers} />
       </main>
     </>
   );
