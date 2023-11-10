@@ -1,13 +1,22 @@
+import useSWR from "swr";
+import { toast } from "react-hot-toast";
+import router from "next/router";
+
 import { IDriver } from "@/models/Driver";
 import { fetcher } from "@/services/axios";
-import useSWR from "swr";
 
 export function useDriver(id: string) {
   const path = `/drivers/${id}`;
 
   const { data, error, isLoading } = useSWR<IDriver>(path, fetcher, {
-    revalidateOnFocus: true,
+    revalidateOnFocus: false,
+    refreshInterval: 0,
   });
+
+  if (error) {
+    toast.error("Erro ao buscar motorista");
+    router.push("/");
+  }
 
   return {
     driver: data ?? {
