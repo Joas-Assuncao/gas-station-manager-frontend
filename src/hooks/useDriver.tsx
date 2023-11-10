@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import router from "next/router";
 
 import { IDriver } from "@/models/Driver";
-import { fetcher } from "@/services/axios";
+import { fetcher } from "@/services/driverService";
 
 export function useDriver(id: string) {
   const path = `/drivers/${id}`;
@@ -12,11 +12,6 @@ export function useDriver(id: string) {
     revalidateOnFocus: false,
     refreshInterval: 0,
   });
-
-  if (error) {
-    toast.error("Erro ao buscar motorista");
-    router.push("/");
-  }
 
   return {
     driver: data ?? {
