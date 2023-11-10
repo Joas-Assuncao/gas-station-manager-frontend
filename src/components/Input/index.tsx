@@ -3,7 +3,7 @@ interface IInputProps {
   name: string;
   placeholder: string;
   required: boolean;
-  value: string | undefined;
+  value: string | undefined | number;
   label: string;
   onChange: (value: string) => void;
 }
@@ -18,7 +18,7 @@ export function Input({
   onChange,
 }: IInputProps) {
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    onChange(e.target.value);
+    onChange(e.target.value.toString().replace(",", "."));
   }
 
   return (
@@ -31,6 +31,8 @@ export function Input({
         placeholder={placeholder}
         required={required}
         value={value}
+        min={0}
+        step={0.01}
         onChange={handleChange}
       />
     </label>

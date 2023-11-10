@@ -1,13 +1,14 @@
 interface IErrorFetchingProps {
   hasError: boolean;
+  message: string;
 }
 
-export function ErrorFetching({ hasError }: IErrorFetchingProps) {
+export function ErrorFetching({ hasError, message }: IErrorFetchingProps) {
   if (!hasError) return null;
 
   return (
     <>
-      <h1>Nenhum motorista.</h1>
+      <p className="text-md">{message}</p>
     </>
   );
 }

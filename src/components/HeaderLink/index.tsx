@@ -8,7 +8,7 @@ interface IHeaderLinkProps {
 export function HeaderLink({ name, path }: IHeaderLinkProps) {
   return (
     <Link
-      className="p-2 hover:bg-gray-800 hover:border hover:border-gray-400 focus:ring focus:ring-gray-300"
+      className="p-2 hover:bg-gray-800 border border-transparent transition-colors duration-150 hover:border hover:border-gray-400 focus:ring focus:ring-gray-300"
       href={path}
     >
       {name}
