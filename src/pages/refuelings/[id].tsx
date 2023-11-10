@@ -1,12 +1,13 @@
 import { useState } from "react";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 import { Input } from "@/components/Input";
 import { postFetcher } from "@/services/refuelingService";
-import { useRouter } from "next/router";
-import toast from "react-hot-toast";
 import { FormContainer } from "@/components/FormContainer";
 import { Select } from "@/components/Select";
+import { Button } from "@/components/Button";
 
 export default function NewRefueling() {
   const [liters, setLiters] = useState<number>(0);
@@ -49,39 +50,29 @@ export default function NewRefueling() {
         <title>Create Refueling | GSM</title>
       </Head>
       <FormContainer onSubmit={handleSubmit}>
-        <div>
-          <Input
-            type="number"
-            name="liters"
-            placeholder="Utilize . ao invés de ,"
-            label="Litros"
-            required={true}
-            value={liters}
-            onChange={handleChangeLiters}
-          />
-        </div>
-        <div>
-          <Input
-            type="number"
-            name="fuelPrice"
-            placeholder="Utilize . ao invés de ,"
-            label="Preço do combustível"
-            required={true}
-            value={fuelPrice}
-            onChange={handleChangeFuelPrice}
-          />
-        </div>
-        <div>
-          <Select value={fuelType} onChange={handleChangeFuelType} />
-        </div>
-        <div className="flex justify-center mt-4">
-          <button
-            type="submit"
-            className="h-10 px-5 w-full text-indigo-100 bg-indigo-700 rounded-lg transition-colors duration-150 focus:shadow-outline hover:bg-indigo-800"
-          >
-            Adicionar abastecimento
-          </button>
-        </div>
+        <Input
+          type="number"
+          name="liters"
+          placeholder="Quantidade de litros"
+          label="Litros *"
+          required
+          value={liters}
+          onChange={handleChangeLiters}
+        />
+        <Input
+          type="number"
+          name="fuelPrice"
+          placeholder="Preço do combustível"
+          label="Preço do combustível *"
+          required
+          value={fuelPrice}
+          onChange={handleChangeFuelPrice}
+        />
+        <Select value={fuelType} onChange={handleChangeFuelType} />
+        <Button
+          disabled={!liters || !fuelType || !fuelPrice}
+          text="Adicionar abastecimento"
+        />
       </FormContainer>
     </>
   );

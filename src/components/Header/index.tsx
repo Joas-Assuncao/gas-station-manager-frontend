@@ -5,7 +5,7 @@ import { HeaderLink } from "../HeaderLink";
 
 export function Header() {
   return (
-    <header className="flex items-center justify-between px-24 py-8">
+    <header className="flex items-center justify-between px-24 py-8 shadow shadow-gray-600">
       <div className="flex items-center justify-start gap-4">
         <Image
           className="w-16 h-16"

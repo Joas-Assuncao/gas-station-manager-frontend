@@ -15,6 +15,8 @@ import { IRefueling } from "@/models/Refueling";
 import { Tbody } from "@/components/Table/components/Tbody";
 import { ErrorFetching } from "@/components/ErrorFetching";
 import Link from "next/link";
+import { isEmailValid } from "@/utils";
+import { Button } from "@/components/Button";
 
 export default function EditDriver() {
   const router = useRouter();
@@ -81,40 +83,32 @@ export default function EditDriver() {
 
       {!isLoading && (
         <FormContainer onSubmit={handleSubmit}>
-          <div>
-            <Input
-              type="text"
-              name="name"
-              placeholder="Digite seu nome"
-              label="Seu nome"
-              required={true}
-              value={name || driver.name}
-              onChange={handleChangeName}
-            />
-          </div>
-          <div>
-            <Input
-              type="email"
-              name="email"
-              placeholder="Digite seu e-mail"
-              label="Seu e-mail"
-              required={true}
-              value={email || driver.email}
-              onChange={handleChangeEmail}
-            />
-          </div>
-          <div className="flex justify-center mt-4">
-            <button
-              type="submit"
-              className="h-10 w-full px-5 text-indigo-100 bg-indigo-700 rounded-lg transition-colors duration-150 focus:shadow-outline hover:bg-indigo-800"
-            >
-              Salvar motorista
-            </button>
-          </div>
+          <Input
+            type="text"
+            name="name"
+            placeholder="Digite seu nome"
+            label="Seu nome *"
+            required={true}
+            value={name || driver.name}
+            onChange={handleChangeName}
+          />
+          <Input
+            type="email"
+            name="email"
+            placeholder="Digite seu e-mail"
+            label="Seu e-mail *"
+            required={true}
+            value={email || driver.email}
+            onChange={handleChangeEmail}
+          />
+          <Button
+            disabled={!name || !email || !isEmailValid(email)}
+            text="Salvar motorista"
+          />
         </FormContainer>
       )}
 
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full mb-8">
         <h1 className="text-2xl">Abastecimentos do motorista:</h1>
         <Link
           className="px-3 py-2 border border-gray-100 rounded-md"
@@ -134,10 +128,12 @@ export default function EditDriver() {
         message="Nenhum abastecimento registrado."
       />
 
-      <TableContainer>
-        <Thead rowHeader={columnsHeader} />
-        <Tbody rowBody={columnsBody} />
-      </TableContainer>
+      {!isLoadingRefuelings && (
+        <TableContainer>
+          <Thead rowHeader={columnsHeader} />
+          <Tbody rowBody={columnsBody} />
+        </TableContainer>
+      )}
     </>
   );
 }

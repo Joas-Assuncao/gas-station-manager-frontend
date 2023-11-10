@@ -7,6 +7,7 @@ import { Thead } from "@/components/Table/components/Thead";
 import { Tbody } from "@/components/Table/components/Tbody";
 import { useMemo } from "react";
 import { IDriver } from "@/models/Driver";
+import { Spinner } from "@/components/Spinner";
 
 export default function Home() {
   const { drivers, error, isLoading } = useDrivers();
@@ -26,15 +27,24 @@ export default function Home() {
         <title>Gas Station Manager</title>
       </Head>
       <main>
-        <h1 className="text-3xl mb-4">Motoristas</h1>
+        <h1 className="text-3xl mb-4 mt-4">Motoristas</h1>
         <ErrorFetching
           hasError={error || !drivers[0]}
-          message="Nenhum motorista registrado"
+          message="Nenhum motorista registrado."
         />
-        <TableContainer>
-          <Thead rowHeader={columnsHeader} />
-          <Tbody rowBody={columnsBody} />
-        </TableContainer>
+
+        {isLoading && (
+          <div className="flex justify-center mt-10">
+            <Spinner size="10" />
+          </div>
+        )}
+
+        {!isLoading && (
+          <TableContainer>
+            <Thead rowHeader={columnsHeader} />
+            <Tbody rowBody={columnsBody} />
+          </TableContainer>
+        )}
       </main>
     </>
   );

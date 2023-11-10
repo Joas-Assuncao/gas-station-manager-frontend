@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Head from "next/head";
+import toast from "react-hot-toast";
 
 import { Input } from "@/components/Input";
 import { postFetcher } from "@/services/driverService";
 import { FormContainer } from "@/components/FormContainer";
-import toast from "react-hot-toast";
+import { isEmailValid } from "@/utils";
+import { Button } from "@/components/Button";
 
 export default function NewDriver() {
   const [name, setName] = useState<string>("");
@@ -42,36 +44,28 @@ export default function NewDriver() {
       <h1 className="w-full text-center text-3xl">Criar motorista</h1>
 
       <FormContainer onSubmit={handleSubmit}>
-        <div>
-          <Input
-            type="text"
-            name="name"
-            placeholder="Digite seu nome"
-            label="Seu nome"
-            required={true}
-            value={name}
-            onChange={handleChangeName}
-          />
-        </div>
-        <div>
-          <Input
-            type="email"
-            name="email"
-            placeholder="Digite seu e-mail"
-            label="Seu e-mail"
-            required={true}
-            value={email}
-            onChange={handleChangeEmail}
-          />
-        </div>
-        <div className="flex justify-center mt-4">
-          <button
-            type="submit"
-            className="h-10 w-full px-5 text-indigo-100 bg-indigo-700 rounded-lg transition-colors duration-150 focus:shadow-outline hover:bg-indigo-800"
-          >
-            Salvar motorista
-          </button>
-        </div>
+        <Input
+          type="text"
+          name="name"
+          placeholder="Digite seu nome"
+          label="Seu nome *"
+          required
+          value={name}
+          onChange={handleChangeName}
+        />
+        <Input
+          type="email"
+          name="email"
+          placeholder="Digite seu e-mail"
+          label="Seu e-mail *"
+          required
+          value={email}
+          onChange={handleChangeEmail}
+        />
+        <Button
+          disabled={!name || !email || !isEmailValid(email)}
+          text="Salvar motorista"
+        />
       </FormContainer>
     </>
   );
