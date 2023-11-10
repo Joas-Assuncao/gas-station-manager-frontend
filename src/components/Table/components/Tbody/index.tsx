@@ -1,3 +1,4 @@
+import { verifyValuesFromTbody } from "@/utils";
 import Link from "next/link";
 import { AiOutlineEdit } from "react-icons/ai";
 
@@ -16,7 +17,7 @@ export function Tbody({ rowBody }: ITbody) {
                 <td key={key} className="px-6 py-4">
                   <Link
                     href={`/drivers/edit/${value}`}
-                    className="flex max-w-max text-xl text-purple-900 border border-transparent rounded-full p-1 hover:border hover:border-gray-500"
+                    className="flex max-w-max text-xl border border-transparent transition-colors duration-150 rounded-full p-1 hover:border hover:border-gray-500"
                   >
                     <AiOutlineEdit />
                   </Link>
@@ -26,7 +27,7 @@ export function Tbody({ rowBody }: ITbody) {
 
             return (
               <td key={key} className="whitespace-nowrap px-6 py-4">
-                {value}
+                {verifyValuesFromTbody(key, value)}
               </td>
             );
           })}
