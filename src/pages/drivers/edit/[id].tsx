@@ -1,22 +1,22 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "react-hot-toast";
 
+import { Button } from "@/components/Button";
+import { ErrorFetching } from "@/components/ErrorFetching";
 import { FormContainer } from "@/components/FormContainer";
 import { Input } from "@/components/Input";
 import { Spinner } from "@/components/Spinner";
 import { TableContainer } from "@/components/Table";
+import { Tbody } from "@/components/Table/components/Tbody";
 import { Thead } from "@/components/Table/components/Thead";
 import { useDriver } from "@/hooks/useDriver";
+import { useFormatTableData } from "@/hooks/useFormatTableData";
 import { useRefuelings } from "@/hooks/useRefuelings";
 import { putFetcher } from "@/services/driverService";
-import { IRefueling } from "@/models/Refueling";
-import { Tbody } from "@/components/Table/components/Tbody";
-import { ErrorFetching } from "@/components/ErrorFetching";
-import Link from "next/link";
 import { isEmailValid } from "@/utils";
-import { Button } from "@/components/Button";
+import { HeaderRefuelings } from "@/components/HeaderRefuelings";
 
 export default function EditDriver() {
   const router = useRouter();
@@ -26,46 +26,36 @@ export default function EditDriver() {
   );
   const [name, setName] = useState<string>(driver.name);
   const [email, setEmail] = useState<string>(driver.email);
+  const { columnsHeader, columnsBody } = useFormatTableData(refuelings);
 
-  const columnsHeader = useMemo(
-    () => (refuelings[0] ? Object.keys(refuelings[0]) : []),
-    [refuelings]
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      try {
+        const data = await putFetcher(`/drivers/${router.query.id}`, {
+          name,
+          email,
+        });
+
+        toast.success("Motorista editado com sucesso!");
+
+        setName(data.name);
+        setEmail(data.email);
+      } catch (error) {
+        toast.error("Não foi possível editar o motorista");
+      }
+    },
+    [email, name, router.query.id]
   );
 
-  const columnsBody: [string, string][][] = useMemo(
-    () => refuelings.map((refueling: IRefueling) => Object.entries(refueling)),
-    [refuelings]
-  );
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    try {
-      const data = await putFetcher(`/drivers/${router.query.id}`, {
-        name,
-        email,
-      });
-
-      toast.success("Motorista editado com sucesso!");
-
-      setName(data.name);
-      setEmail(data.email);
-    } catch (error) {
-      toast.error("Não foi possível editar o motorista");
-    }
-  }
-
-  function handleChangeName(value: string) {
+  const handleChangeName = useCallback((value: string) => {
     setName(value);
-  }
+  }, []);
 
-  function handleChangeEmail(value: string) {
+  const handleChangeEmail = useCallback((value: string) => {
     setEmail(value);
-  }
-
-  if (isLoading) {
-    return <Spinner size="10" />;
-  }
+  }, []);
 
   return (
     <>
@@ -75,11 +65,7 @@ export default function EditDriver() {
 
       <h1 className="w-full text-center text-3xl">Editar motorista</h1>
 
-      {isLoading && (
-        <div className="flex justify-center mt-10">
-          <Spinner size="10" />
-        </div>
-      )}
+      <Spinner isLoading={isLoading} />
 
       {!isLoading && (
         <FormContainer onSubmit={handleSubmit}>
@@ -108,20 +94,9 @@ export default function EditDriver() {
         </FormContainer>
       )}
 
-      <div className="flex items-center justify-between w-full mb-8">
-        <h1 className="text-2xl">Abastecimentos do motorista:</h1>
-        <Link
-          className="px-3 py-2 border border-gray-100 rounded-md"
-          href={`/refuelings/${router.query.id}`}
-        >
-          Adicionar abastecimento
-        </Link>
-      </div>
-      {isLoadingRefuelings && (
-        <div className="flex justify-center mt-10">
-          <Spinner size="10" />
-        </div>
-      )}
+      <HeaderRefuelings router={router} />
+
+      <Spinner isLoading={isLoadingRefuelings} />
 
       <ErrorFetching
         hasError={!refuelings[0]}

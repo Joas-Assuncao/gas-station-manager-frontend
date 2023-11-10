@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Head from "next/head";
 import toast from "react-hot-toast";
@@ -14,26 +14,29 @@ export default function NewDriver() {
   const [email, setEmail] = useState<string>("");
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    try {
-      await postFetcher("/drivers", { name, email });
+      try {
+        await postFetcher("/drivers", { name, email });
 
-      toast.success("Motorista cadastrado com sucesso!");
-      router.push("/");
-    } catch (err) {
-      toast.error("Não foi possível criar o motorista.");
-    }
-  }
+        toast.success("Motorista cadastrado com sucesso!");
+        router.push("/");
+      } catch (err) {
+        toast.error("Não foi possível criar o motorista.");
+      }
+    },
+    [email, name, router]
+  );
 
-  function handleChangeName(value: string) {
+  const handleChangeName = useCallback((value: string) => {
     setName(value);
-  }
+  }, []);
 
-  function handleChangeEmail(value: string) {
+  const handleChangeEmail = useCallback((value: string) => {
     setEmail(value);
-  }
+  }, []);
 
   return (
     <>
