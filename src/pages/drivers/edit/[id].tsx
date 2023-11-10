@@ -1,19 +1,39 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useState } from "react";
 
 import { FormContainer } from "@/components/FormContainer";
 import { Input } from "@/components/Input";
-import { useDriver } from "@/hooks/useDriver";
-import { putFetcher } from "@/services/axios";
 import { Spinner } from "@/components/Spinner";
+import { TableContainer } from "@/components/Table";
+import { Thead } from "@/components/Table/components/Thead";
+import { useDriver } from "@/hooks/useDriver";
+import { useRefuelings } from "@/hooks/useRefuelings";
+import { putFetcher } from "@/services/driverService";
+import { IRefueling } from "@/models/Refueling";
+import { Tbody } from "@/components/Table/components/Tbody";
+import { ErrorFetching } from "@/components/ErrorFetching";
+import Link from "next/link";
 
 export default function EditDriver() {
   const router = useRouter();
-  const { driver, isLoading, error } = useDriver(router.query.id as string);
+  const { driver, isLoading } = useDriver(router.query.id as string);
+  const { refuelings, isLoading: isLoadingRefuelings } = useRefuelings(
+    router.query.id as string
+  );
   const [name, setName] = useState<string>(driver.name);
   const [email, setEmail] = useState<string>(driver.email);
+
+  const columnsHeader = useMemo(
+    () => (refuelings[0] ? Object.keys(refuelings[0]) : []),
+    [refuelings]
+  );
+
+  const columnsBody: [string, string][][] = useMemo(
+    () => refuelings.map((refueling: IRefueling) => Object.entries(refueling)),
+    [refuelings]
+  );
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -29,7 +49,7 @@ export default function EditDriver() {
       setName(data.name);
       setEmail(data.email);
     } catch (error) {
-      toast.error("Erro ao editar motorista");
+      toast.error("Não foi possível editar o motorista");
     }
   }
 
@@ -48,11 +68,20 @@ export default function EditDriver() {
   return (
     <>
       <Head>
-        <title>Edit Driver {name} | GSM</title>
+        <title>Edit Driver | GSM</title>
       </Head>
+
+      <h1 className="w-full text-center text-3xl">Editar motorista</h1>
+
+      {isLoading && (
+        <div className="flex justify-center mt-10">
+          <Spinner size="10" />
+        </div>
+      )}
+
       {!isLoading && (
         <FormContainer onSubmit={handleSubmit}>
-          <div className="mb-2">
+          <div>
             <Input
               type="text"
               name="name"
@@ -63,7 +92,7 @@ export default function EditDriver() {
               onChange={handleChangeName}
             />
           </div>
-          <div className="mb-2 mt-6">
+          <div>
             <Input
               type="email"
               name="email"
@@ -74,10 +103,10 @@ export default function EditDriver() {
               onChange={handleChangeEmail}
             />
           </div>
-          <div className="flex justify-center mt-10">
+          <div className="flex justify-center mt-4">
             <button
               type="submit"
-              className="h-10 px-5 w-full text-indigo-100 bg-indigo-700 rounded-lg transition-colors duration-150 focus:shadow-outline hover:bg-indigo-800"
+              className="h-10 w-full px-5 text-indigo-100 bg-indigo-700 rounded-lg transition-colors duration-150 focus:shadow-outline hover:bg-indigo-800"
             >
               Salvar motorista
             </button>
@@ -85,11 +114,30 @@ export default function EditDriver() {
         </FormContainer>
       )}
 
-      {isLoading && (
+      <div className="flex items-center justify-between w-full">
+        <h1 className="text-2xl">Abastecimentos do motorista:</h1>
+        <Link
+          className="px-3 py-2 border border-gray-100 rounded-md"
+          href={`/refuelings/${router.query.id}`}
+        >
+          Adicionar abastecimento
+        </Link>
+      </div>
+      {isLoadingRefuelings && (
         <div className="flex justify-center mt-10">
           <Spinner size="10" />
         </div>
       )}
+
+      <ErrorFetching
+        hasError={!refuelings[0]}
+        message="Nenhum abastecimento registrado."
+      />
+
+      <TableContainer>
+        <Thead rowHeader={columnsHeader} />
+        <Tbody rowBody={columnsBody} />
+      </TableContainer>
     </>
   );
 }
