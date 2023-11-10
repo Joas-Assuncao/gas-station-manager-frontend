@@ -36,7 +36,7 @@ export default function NewDriver() {
                 label="Seu nome"
                 required={true}
                 value={name}
-                setValue={setName}
+                onChange={setName}
               />
             </div>
             <div className="mb-2 mt-6">
@@ -47,7 +47,7 @@ export default function NewDriver() {
                 label="Seu e-mail"
                 required={true}
                 value={email}
-                setValue={setEmail}
+                onChange={setEmail}
               />
             </div>
             <div className="flex justify-center mt-10">
