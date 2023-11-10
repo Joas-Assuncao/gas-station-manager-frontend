@@ -1,23 +1,36 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Head from "next/head";
 
 import { Input } from "@/components/Input";
-import { postFetcher } from "@/services/axios";
-import { useRouter } from "next/navigation";
+import { postFetcher } from "@/services/driverService";
+import { FormContainer } from "@/components/FormContainer";
+import toast from "react-hot-toast";
 
 export default function NewDriver() {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const { back } = useRouter();
+  const router = useRouter();
 
-  async function handleSubmit() {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
     try {
       await postFetcher("/drivers", { name, email });
 
-      back();
+      toast.success("Motorista cadastrado com sucesso!");
+      router.push("/");
     } catch (err) {
-      console.log(err);
+      toast.error("Não foi possível criar o motorista.");
     }
+  }
+
+  function handleChangeName(value: string) {
+    setName(value);
+  }
+
+  function handleChangeEmail(value: string) {
+    setEmail(value);
   }
 
   return (
@@ -25,42 +38,41 @@ export default function NewDriver() {
       <Head>
         <title>Create Driver | GSM</title>
       </Head>
-      <div className="flex flex-col justify-center overflow-hidden">
-        <div className="w-full p-6 m-auto rounded-md lg:max-w-xl">
-          <form className="mt-6" onSubmit={handleSubmit}>
-            <div className="mb-2">
-              <Input
-                type="text"
-                name="name"
-                placeholder="Digite seu nome"
-                label="Seu nome"
-                required={true}
-                value={name}
-                onChange={setName}
-              />
-            </div>
-            <div className="mb-2 mt-6">
-              <Input
-                type="email"
-                name="email"
-                placeholder="Digite seu e-mail"
-                label="Seu e-mail"
-                required={true}
-                value={email}
-                onChange={setEmail}
-              />
-            </div>
-            <div className="flex justify-center mt-10">
-              <button
-                type="submit"
-                className="h-10 px-5 w-full text-indigo-100 bg-indigo-700 rounded-lg transition-colors duration-150 focus:shadow-outline hover:bg-indigo-800"
-              >
-                Salvar motorista
-              </button>
-            </div>
-          </form>
+
+      <h1 className="w-full text-center text-3xl">Criar motorista</h1>
+
+      <FormContainer onSubmit={handleSubmit}>
+        <div>
+          <Input
+            type="text"
+            name="name"
+            placeholder="Digite seu nome"
+            label="Seu nome"
+            required={true}
+            value={name}
+            onChange={handleChangeName}
+          />
         </div>
-      </div>
+        <div>
+          <Input
+            type="email"
+            name="email"
+            placeholder="Digite seu e-mail"
+            label="Seu e-mail"
+            required={true}
+            value={email}
+            onChange={handleChangeEmail}
+          />
+        </div>
+        <div className="flex justify-center mt-4">
+          <button
+            type="submit"
+            className="h-10 w-full px-5 text-indigo-100 bg-indigo-700 rounded-lg transition-colors duration-150 focus:shadow-outline hover:bg-indigo-800"
+          >
+            Salvar motorista
+          </button>
+        </div>
+      </FormContainer>
     </>
   );
 }
