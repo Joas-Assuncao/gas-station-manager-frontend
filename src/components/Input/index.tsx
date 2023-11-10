@@ -5,7 +5,7 @@ interface IInputProps {
   required: boolean;
   value: string | undefined;
   label: string;
-  setValue: (value: string) => void;
+  onChange: (value: string) => void;
 }
 
 export function Input({
@@ -15,8 +15,12 @@ export function Input({
   required,
   value,
   label,
-  setValue,
+  onChange,
 }: IInputProps) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    onChange(e.target.value);
+  }
+
   return (
     <label>
       <span className="text-gray-300">{label}</span>
@@ -27,7 +31,7 @@ export function Input({
         placeholder={placeholder}
         required={required}
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={handleChange}
       />
     </label>
   );
