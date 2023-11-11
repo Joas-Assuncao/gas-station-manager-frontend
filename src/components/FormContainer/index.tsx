@@ -6,7 +6,7 @@ interface IFormContainerProps {
 export function FormContainer({ children, onSubmit }: IFormContainerProps) {
   return (
     <div className="flex flex-col justify-center overflow-hidden">
-      <div className="w-full p-8 m-auto rounded-md lg:max-w-xl">
+      <div className="w-full py-8 m-auto rounded-md lg:max-w-xl">
         <form className="flex flex-col gap-4" onSubmit={onSubmit}>
           {children}
         </form>

@@ -8,7 +8,7 @@ export function ErrorFetching({ hasError, message }: IErrorFetchingProps) {
 
   return (
     <>
-      <p className="text-md">{message}</p>
+      <p className="text-md mt-4 mb-4">{message}</p>
     </>
   );
 }

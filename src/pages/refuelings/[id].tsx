@@ -13,12 +13,14 @@ export default function NewRefueling() {
   const [liters, setLiters] = useState<number>(0);
   const [fuelType, setFuelType] = useState<number>(2);
   const [fuelPrice, setFuelPrice] = useState<number>(0);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     try {
+      setIsSubmitting(true);
       await postFetcher(`/refuelings/${router.query.id}`, {
         liters,
         fuelType,
@@ -29,6 +31,8 @@ export default function NewRefueling() {
       router.push(`/drivers/edit/${router.query.id}`);
     } catch (err) {
       toast.error("Não foi possível cadastrar o abastecimento.");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -49,6 +53,9 @@ export default function NewRefueling() {
       <Head>
         <title>Create Refueling | GSM</title>
       </Head>
+
+      <h1 className="w-full text-3xl">Criar abastecimento</h1>
+
       <FormContainer onSubmit={handleSubmit}>
         <Input
           type="number"
@@ -70,6 +77,7 @@ export default function NewRefueling() {
         />
         <Select value={fuelType} onChange={handleChangeFuelType} />
         <Button
+          isLoading={isSubmitting}
           disabled={!liters || !fuelType || !fuelPrice}
           text="Adicionar abastecimento"
         />

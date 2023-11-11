@@ -5,20 +5,20 @@ export function Spinner({
 }: {
   size?: string;
   className?: string;
-  isLoading?: boolean;
+  isLoading: boolean;
 }) {
-  if (isLoading) return null;
-
   const svgClassName = `w-${size || "10"} h-${
-    size || "8"
-  } text-gray-200 animate-spin dark:text-gray-600 fill-blue-600`;
+    size || "10"
+  }  text-gray-200 animate-spin fill-blue-600`;
+
+  if (!isLoading) return null;
 
   return (
-    <div className="flex justify-center mt-10">
-      <div role="status" className={className}>
+    <div className="flex justify-center mt-4 mb-4">
+      <div role="status">
         <svg
           aria-hidden="true"
-          className={svgClassName}
+          className={svgClassName + className}
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

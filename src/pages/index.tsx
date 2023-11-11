@@ -17,14 +17,16 @@ export default function Home() {
       <Head>
         <title>Gas Station Manager</title>
       </Head>
+
       <main>
-        <h1 className="text-3xl mb-4 mt-4">Motoristas</h1>
+        <h1 className="text-3xl">Motoristas</h1>
+
+        <Spinner isLoading={isLoading} />
+
         <ErrorFetching
           hasError={error || !drivers[0]}
           message="Nenhum motorista registrado."
         />
-
-        <Spinner isLoading={isLoading} />
 
         {!isLoading && (
           <TableContainer>

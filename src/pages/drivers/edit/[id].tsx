@@ -1,11 +1,12 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import { Button } from "@/components/Button";
 import { ErrorFetching } from "@/components/ErrorFetching";
 import { FormContainer } from "@/components/FormContainer";
+import { HeaderRefuelings } from "@/components/HeaderRefuelings";
 import { Input } from "@/components/Input";
 import { Spinner } from "@/components/Spinner";
 import { TableContainer } from "@/components/Table";
@@ -16,7 +17,6 @@ import { useFormatTableData } from "@/hooks/useFormatTableData";
 import { useRefuelings } from "@/hooks/useRefuelings";
 import { putFetcher } from "@/services/driverService";
 import { isEmailValid } from "@/utils";
-import { HeaderRefuelings } from "@/components/HeaderRefuelings";
 
 export default function EditDriver() {
   const router = useRouter();
@@ -26,6 +26,7 @@ export default function EditDriver() {
   );
   const [name, setName] = useState<string>(driver.name);
   const [email, setEmail] = useState<string>(driver.email);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { columnsHeader, columnsBody } = useFormatTableData(refuelings);
 
   const handleSubmit = useCallback(
@@ -33,6 +34,8 @@ export default function EditDriver() {
       event.preventDefault();
 
       try {
+        setIsSubmitting(true);
+
         const data = await putFetcher(`/drivers/${router.query.id}`, {
           name,
           email,
@@ -44,6 +47,8 @@ export default function EditDriver() {
         setEmail(data.email);
       } catch (error) {
         toast.error("Não foi possível editar o motorista");
+      } finally {
+        setIsSubmitting(false);
       }
     },
     [email, name, router.query.id]
@@ -63,7 +68,7 @@ export default function EditDriver() {
         <title>Edit Driver | GSM</title>
       </Head>
 
-      <h1 className="w-full text-center text-3xl">Editar motorista</h1>
+      <h1 className="w-full text-3xl">Editar motorista</h1>
 
       <Spinner isLoading={isLoading} />
 
@@ -89,6 +94,7 @@ export default function EditDriver() {
           />
           <Button
             disabled={!name || !email || !isEmailValid(email)}
+            isLoading={isSubmitting}
             text="Salvar motorista"
           />
         </FormContainer>
